@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Address Verification Tool</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Loan Recovery Operations</div>
+  <h1>Address Verification Tool</h1>
+  <p class="subtitle">
+    Upload your Customer Data and Visited Data files. Addresses are
+    geocoded and compared automatically — visits within 1 km of the
+    customer's address are marked Verified. The result downloads as an
+    Excel file as soon as you submit.
+  </p>
+
+  <form action="/compare" method="post" enctype="multipart/form-data" id="compareForm">
+    <label>Customer Data (.csv or .xlsx)</label>
+    <p class="subtitle" style="margin-top:-8px; font-size:11.5px;">
+      Required columns: <b>Loan_ID</b>, <b>Customer_Address</b> (Customer_Name optional)
+    </p>
+    <input type="file" name="customer_file" accept=".csv,.xlsx,.xls" required style="margin-bottom: 22px;" />
+
+    <label>Visited Data (.csv or .xlsx)</label>
+    <p class="subtitle" style="margin-top:-8px; font-size:11.5px;">
+      Required columns: <b>Loan_ID</b>, <b>Visited_Address</b> (Executive_Name, Visit_Date optional)
+    </p>
+    <input type="file" name="visited_file" accept=".csv,.xlsx,.xls" required style="margin-bottom: 22px;" />
+
+    <button type="submit" id="submitBtn">Compare &amp; download result</button>
+  </form>
+
+  <div class="note" id="pendingNote" style="display:none;">
+    Processing — geocoding addresses can take a few seconds per unique
+    address the first time. Your download will start automatically.
+  </div>
+
+  <div class="note">
+    Each row in Visited Data is matched to Customer Data by Loan_ID.
+    Rows are marked <b>VERIFIED</b> (≤1 km), <b>NOT_VERIFIED</b> (&gt;1 km),
+    <b>COULD_NOT_GEOCODE</b> (an address couldn't be located), or
+    <b>LOAN_ID_NOT_FOUND</b> (no matching customer record).
+  </div>
+</div>
+
+<script>
+  document.getElementById('compareForm').addEventListener('submit', function () {
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'Processing…';
+    document.getElementById('pendingNote').style.display = 'block';
+  });
+</script>
+</body>
+</html>
